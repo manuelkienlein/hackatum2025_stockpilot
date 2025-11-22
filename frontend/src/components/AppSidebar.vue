@@ -58,7 +58,11 @@ const data = {
       items: [
         {
           title: "Stocks",
-          url: "/stocks/1",
+          url: "/stocks",
+        },
+        {
+          title: "Watchlist",
+          url: "#",
         },
       ],
     },
