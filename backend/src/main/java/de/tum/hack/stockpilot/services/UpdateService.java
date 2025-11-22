@@ -1,6 +1,7 @@
 package de.tum.hack.stockpilot.services;
 
 import de.tum.hack.stockpilot.entities.PriceEntity;
+import de.tum.hack.stockpilot.entities.StockEntity;
 import de.tum.hack.stockpilot.entitiesAPI.PriceEntityAPI;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,11 +23,19 @@ public class UpdateService {
 
     @Transactional
     public void fetchPriceHistory(String symbol) {
+
+        StockEntity stock = StockEntity.find("symbol", symbol).firstResult();
+
+        if (stock == null) {
+            System.err.println("Warning: Skipping stock with symbol \"" + symbol + "\"");
+            return;
+        }
+
         List<PriceEntityAPI> users = apiClient.getPricesFromAPI(symbol, apiKey);
 
         for (PriceEntityAPI entityAPI : users) {
             PriceEntity price = new PriceEntity();
-            price.stock_id = -1L;   // TODO
+            price.stock_id = stock.id;
             price.date = entityAPI.date;
             price.open = entityAPI.open;
             price.close = entityAPI.close;
