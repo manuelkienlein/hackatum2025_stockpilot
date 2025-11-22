@@ -1,8 +1,7 @@
 package de.tum.hack.stockpilot.services;
 
-import de.tum.hack.stockpilot.entities.PriceEntity;
-import de.tum.hack.stockpilot.entitiesAPI.PriceEntityAPI;
-import de.tum.hack.stockpilot.entitiesAPI.StockEntityAPI;
+import de.tum.hack.stockpilot.dto.PriceEntityResponse;
+import de.tum.hack.stockpilot.dto.StockEntityResponse;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -14,9 +13,9 @@ import java.util.List;
 public interface ExternalApiClient {
     @GET
     @Path("/historical-price-eod/full")
-    List<PriceEntityAPI> getPricesFromAPI(@QueryParam("symbol") String symbol, @QueryParam("apikey") String apikey);
+    List<PriceEntityResponse> getPricesFromAPI(@QueryParam("symbol") String symbol, @QueryParam("apikey") String apikey);
 
     @GET
     @Path("/profile")
-    List<StockEntityAPI> getStockInfoFromAPI(@QueryParam("symbol") String symbol, @QueryParam("apikey") String apikey);
+    List<StockEntityResponse> getStockInfoFromAPI(@QueryParam("symbol") String symbol, @QueryParam("apikey") String apikey);
 }

@@ -1,12 +1,8 @@
-package de.tum.hack.stockpilot.entitiesAPI;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Entity;
+package de.tum.hack.stockpilot.dto;
 
 import java.util.Date;
 
-@Entity
-public class PriceEntityAPI extends PanacheEntity {
+public class PriceEntityResponse {
     public String symbol;
     public Date date;
     public Float open;
@@ -18,6 +14,6 @@ public class PriceEntityAPI extends PanacheEntity {
     public Float changePercent;
     public Float vwap;
 
-    public PriceEntityAPI() {
+    public PriceEntityResponse() {
     }
 }

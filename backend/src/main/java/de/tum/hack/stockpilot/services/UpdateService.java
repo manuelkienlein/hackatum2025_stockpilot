@@ -2,8 +2,8 @@ package de.tum.hack.stockpilot.services;
 
 import de.tum.hack.stockpilot.entities.PriceEntity;
 import de.tum.hack.stockpilot.entities.StockEntity;
-import de.tum.hack.stockpilot.entitiesAPI.PriceEntityAPI;
-import de.tum.hack.stockpilot.entitiesAPI.StockEntityAPI;
+import de.tum.hack.stockpilot.dto.PriceEntityResponse;
+import de.tum.hack.stockpilot.dto.StockEntityResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -32,9 +32,9 @@ public class UpdateService {
             return;
         }
 
-        List<PriceEntityAPI> users = apiClient.getPricesFromAPI(symbol, apiKey);
+        List<PriceEntityResponse> users = apiClient.getPricesFromAPI(symbol, apiKey);
 
-        for (PriceEntityAPI entityAPI : users) {
+        for (PriceEntityResponse entityAPI : users) {
             PriceEntity price = new PriceEntity();
             price.stock_id = stock.id;
             price.date = entityAPI.date;
@@ -56,7 +56,7 @@ public class UpdateService {
 
         stock = new StockEntity();
 
-        StockEntityAPI stockAPI = apiClient.getStockInfoFromAPI(symbol, apiKey).get(0);
+        StockEntityResponse stockAPI = apiClient.getStockInfoFromAPI(symbol, apiKey).get(0);
 
         stock.symbol = stockAPI.symbol;
         stock.name = stockAPI.companyName;
