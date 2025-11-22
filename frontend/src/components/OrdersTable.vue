@@ -1,10 +1,20 @@
 <template>
-  <div class="space-y-6">
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-semibold tracking-tight">Orders</h1>
-      <Button @click="openCreateDialog">
-        Neue Order
-      </Button>
+  <div class="w-full rounded-xl border bg-card text-card-foreground p-4 md:p-6 space-y-4">
+    <!-- Header -->
+    <div class="mb-2 flex items-center justify-between gap-2">
+      <div>
+        <h2 class="text-lg font-semibold tracking-tight">
+          Orders
+        </h2>
+        <p class="text-sm text-muted-foreground">
+          Simulated buy / sell / limit orders for your portfolio.
+        </p>
+      </div>
+      <div class="flex flex-col items-end gap-1">
+        <Button size="sm" @click="openCreateDialog">
+          Neue Order
+        </Button>
+      </div>
     </div>
 
     <!-- Fehleranzeige -->
@@ -13,115 +23,146 @@
     </div>
 
     <!-- Tabelle -->
-    <div class="border rounded-xl overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Id</TableHead>
-            <TableHead>Symbol</TableHead>
-            <TableHead>Side</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead class="text-right">Quantity</TableHead>
-            <TableHead class="text-right">Limit</TableHead>
-            <TableHead class="text-right">Stop</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead>Executed</TableHead>
-            <TableHead class="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow v-if="loading">
-            <TableCell colspan="11" class="text-center py-6 text-sm text-muted-foreground">
-              Lädt Orders…
-            </TableCell>
-          </TableRow>
-          <TableRow v-else-if="orders.length === 0">
-            <TableCell colspan="11" class="text-center py-6 text-sm text-muted-foreground">
-              Noch keine Orders vorhanden.
-            </TableCell>
-          </TableRow>
-          <TableRow
-              v-else
-              v-for="order in orders"
-              :key="order.id"
-          >
-            <TableCell>{{ order.id }}</TableCell>
-            <TableCell>{{ order.symbol }}</TableCell>
-            <TableCell>
-              <Badge :variant="order.side === 'BUY' ? 'default' : 'secondary'">
-                {{ order.side }}
-              </Badge>
-            </TableCell>
-            <TableCell>{{ order.type }}</TableCell>
-            <TableCell class="text-right">
-              {{ order.quantity }}
-            </TableCell>
-            <TableCell class="text-right">
-              {{ order.limitPrice ?? '–' }}
-            </TableCell>
-            <TableCell class="text-right">
-              {{ order.stopPrice ?? '–' }}
-            </TableCell>
-            <TableCell>
-              <Badge
-                  :variant="statusVariant(order.status)"
-                  class="uppercase"
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead class="w-[90px]">Symbol</TableHead>
+          <TableHead>Type</TableHead>
+          <TableHead>Side</TableHead>
+          <TableHead class="text-right">Qty</TableHead>
+          <TableHead class="text-right">Limit / Exec</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead class="text-right">Placed</TableHead>
+          <TableHead class="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-if="loading">
+          <TableCell colspan="8" class="text-center py-6 text-sm text-muted-foreground">
+            Lädt Orders…
+          </TableCell>
+        </TableRow>
+        <TableRow v-else-if="orders.length === 0">
+          <TableCell colspan="8" class="text-center py-6 text-sm text-muted-foreground">
+            Noch keine Orders vorhanden.
+          </TableCell>
+        </TableRow>
+
+        <TableRow
+            v-else
+            v-for="order in orders"
+            :key="order.id"
+        >
+          <!-- Symbol -->
+          <TableCell class="font-mono font-semibold">
+            {{ order.symbol }}
+          </TableCell>
+
+          <!-- Type -->
+          <TableCell>
+            <span class="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {{ order.type }}
+            </span>
+          </TableCell>
+
+          <!-- Side -->
+          <TableCell>
+            <span
+                :class="[
+                'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold',
+                order.side === 'BUY'
+                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300'
+                  : 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300',
+              ]"
+            >
+              {{ order.side }}
+            </span>
+          </TableCell>
+
+          <!-- Quantity -->
+          <TableCell class="text-right">
+            {{ order.quantity.toLocaleString() }}
+          </TableCell>
+
+          <!-- Limit / Exec -->
+          <TableCell class="text-right">
+            <div class="flex flex-col items-end">
+              <span
+                  v-if="order.type === 'LIMIT' || order.type === 'STOP_LIMIT'"
+                  class="text-xs text-muted-foreground"
               >
-                {{ order.status }}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <span class="text-xs text-muted-foreground">
-                {{ formatDate(order.createdAt) }}
+                Limit: {{ order.limitPrice != null ? formatPrice(order.limitPrice) : '–' }}
               </span>
-            </TableCell>
-            <TableCell>
-              <div class="flex flex-col text-xs text-muted-foreground">
-                <span v-if="order.executedAt">
-                  {{ formatDate(order.executedAt) }}
-                </span>
-                <span v-if="order.executedPrice">
-                  @ {{ order.executedPrice }}
-                </span>
-              </div>
-            </TableCell>
-            <TableCell class="text-right">
-              <div class="flex items-center justify-end gap-2">
-                <Button
-                    size="icon"
-                    variant="outline"
-                    @click="openExecuteDialog(order)"
-                    :disabled="order.status !== 'PENDING'"
-                    title="Ausführen"
-                >
-                  <Play class="w-4 h-4" />
-                </Button>
-                <Button
-                    size="icon"
-                    variant="outline"
-                    @click="openEditDialog(order)"
-                    :disabled="order.status !== 'PENDING'"
-                    title="Bearbeiten"
-                >
-                  <Pencil class="w-4 h-4" />
-                </Button>
-                <Button
-                    size="icon"
-                    variant="destructive"
-                    @click="cancelOrder(order)"
-                    :disabled="order.status !== 'PENDING' || cancellingId === order.id"
-                    title="Abbrechen"
-                >
-                  <Loader2 v-if="cancellingId === order.id" class="w-4 h-4 animate-spin" />
-                  <X v-else class="w-4 h-4" />
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </div>
+              <span v-if="order.executedPrice !== null" class="text-xs">
+                Exec: {{ formatPrice(order.executedPrice!) }}
+              </span>
+              <span v-else-if="order.type !== 'LIMIT' && order.type !== 'STOP_LIMIT'" class="text-xs text-muted-foreground">
+                –
+              </span>
+            </div>
+          </TableCell>
+
+          <!-- Status -->
+          <TableCell>
+            <span
+                :class="[
+                'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold',
+                statusColorClass(order.status),
+              ]"
+            >
+              <span
+                  class="mr-1 inline-block h-1.5 w-1.5 rounded-full"
+                  :class="statusDotClass(order.status)"
+              />
+              {{ order.status }}
+            </span>
+          </TableCell>
+
+          <!-- Placed (createdAt) -->
+          <TableCell class="text-right text-xs text-muted-foreground">
+            {{ formatDate(order.createdAt) }}
+          </TableCell>
+
+          <!-- Actions -->
+          <TableCell class="text-right">
+            <div class="flex items-center justify-end gap-2">
+              <Button
+                  size="icon"
+                  variant="outline"
+                  @click="openExecuteDialog(order)"
+                  :disabled="order.status !== 'PENDING'"
+                  title="Ausführen"
+              >
+                <Play class="w-4 h-4" />
+              </Button>
+              <Button
+                  size="icon"
+                  variant="outline"
+                  @click="openEditDialog(order)"
+                  :disabled="order.status !== 'PENDING'"
+                  title="Bearbeiten"
+              >
+                <Pencil class="w-4 h-4" />
+              </Button>
+              <Button
+                  size="icon"
+                  variant="destructive"
+                  @click="cancelOrder(order)"
+                  :disabled="order.status !== 'PENDING' || cancellingId === order.id"
+                  title="Abbrechen"
+              >
+                <Loader2 v-if="cancellingId === order.id" class="w-4 h-4 animate-spin" />
+                <X v-else class="w-4 h-4" />
+              </Button>
+            </div>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+
+    <p class="mt-3 text-xs text-muted-foreground">
+      {{ orders.length }} orders total
+    </p>
 
     <!-- Dialog für Create/Edit -->
     <Dialog v-model:open="dialogOpen">
@@ -330,7 +371,6 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
 
 // Icons (lucide-vue-next)
 import { Loader2, Pencil, Play, X } from 'lucide-vue-next'
@@ -404,23 +444,51 @@ const executeForm = ref<ExecuteForm>({
 
 // ---- Helpers ----
 
-const apiBase = 'http://localhost:8080/orders' // ggf. anpassen, z.B. '/api/orders'
+const apiBase = 'http://localhost:8080/orders' // ggf. anpassen
 
 function formatDate(value: string | null | undefined): string {
   if (!value) return ''
   const d = new Date(value)
   if (Number.isNaN(d.getTime())) return value
-  return d.toLocaleString()
+  return d.toLocaleString('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 }
 
-function statusVariant(status: OrderStatus) {
+function formatPrice(value: number): string {
+  return new Intl.NumberFormat('de-DE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4
+  }).format(value)
+}
+
+function statusColorClass(status: OrderStatus): string {
   switch (status) {
     case 'PENDING':
-      return 'outline'
+      return 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300'
     case 'EXECUTED':
-      return 'default'
+      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300'
     case 'CANCELLED':
-      return 'destructive'
+      return 'bg-slate-100 text-slate-600 dark:bg-slate-800/50 dark:text-slate-300'
+    default:
+      return 'bg-slate-100 text-slate-600 dark:bg-slate-800/50 dark:text-slate-300'
+  }
+}
+
+function statusDotClass(status: OrderStatus): string {
+  switch (status) {
+    case 'PENDING':
+      return 'bg-amber-500'
+    case 'EXECUTED':
+      return 'bg-emerald-500'
+    case 'CANCELLED':
+      return 'bg-slate-400'
+    default:
+      return 'bg-slate-400'
   }
 }
 
