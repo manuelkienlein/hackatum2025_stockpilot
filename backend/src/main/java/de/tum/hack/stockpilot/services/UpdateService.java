@@ -60,7 +60,7 @@ public class UpdateService {
 
         stock.symbol = stockAPI.symbol;
         stock.name = stockAPI.companyName;
-        stock.exchange = stockAPI.isin;
+        stock.exchange = stockAPI.exchange;
         stock.isin = stockAPI.isin;
         stock.persist();
     }
