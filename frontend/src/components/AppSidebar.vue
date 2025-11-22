@@ -44,11 +44,11 @@ const data = {
       items: [
         {
           title: "Portfolio",
-          url: "#",
+          url: "/portfolio",
         },
         {
           title: "Order",
-          url: "#",
+          url: "/orders",
         },
       ],
     },
@@ -58,7 +58,7 @@ const data = {
       items: [
         {
           title: "Stocks",
-          url: "#",
+          url: "/stocks/1",
         },
       ],
     },

@@ -6,6 +6,8 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import StockDetailsView from "../views/StockDetailsView.vue";
 import AccountLayout from "../layouts/AccountLayout.vue";
+import PortfolioView from "../views/PortfolioView.vue";
+import OrderView from "../views/OrderView.vue";
 
 const routes = [
     { path: '/', redirect: '/login' },
@@ -15,11 +17,25 @@ const routes = [
     { path: '/profile', name: 'Profile', component: PageView },
     { path: '/pages', name: 'PageViewEmpty', component: PageView },
     { path: '/pages/:id', name: 'PageView', component: PageView },
-    { name: 'Account', component: AccountLayout, children: [{
-        path: '/stocks/:id',
-            name: 'StockDetailsView',
-            component: StockDetailsView,
-        }] },
+    { name: 'Account', component: AccountLayout, children:
+        [
+            {
+                path: '/stocks/:id',
+                name: 'StockDetailsView',
+                component: StockDetailsView,
+            },
+            {
+                path: '/portfolio',
+                name: 'PortfolioView',
+                component: PortfolioView,
+            },
+            {
+                path: '/orders',
+                name: 'OrderView',
+                component: OrderView,
+            },
+        ]
+    },
 ]
 
 const router = createRouter({
