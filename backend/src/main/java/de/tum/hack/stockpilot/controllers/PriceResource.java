@@ -23,7 +23,7 @@ public class PriceResource {
 
     @GET
     @Path("{id}")
-    public PriceEntity getSingle(Long id) {
+    public PriceEntity getSingle(@PathParam("id") Long id) {
         PriceEntity entity = PriceEntity.findById(id);
         if (entity == null) {
             throw new WebApplicationException("Price listing with id of " + id + " does not exist.", 404);
@@ -45,7 +45,7 @@ public class PriceResource {
     @DELETE
     @Path("{id}")
     @Transactional
-    public Response delete(Long id) {
+    public Response delete(@PathParam("id") Long id) {
         PriceEntity entity = PriceEntity.findById(id);
         if (entity == null) {
             throw new WebApplicationException("Stock with id of " + id + " does not exist.", 404);

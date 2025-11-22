@@ -23,7 +23,7 @@ public class StocksResource {
 
     @GET
     @Path("{id}")
-    public StockEntity getSingle(Long id) {
+    public StockEntity getSingle(@PathParam("id") Long id) {
         StockEntity entity = StockEntity.findById(id);
         if (entity == null) {
             throw new WebApplicationException("Stock with id of " + id + " does not exist.", 404);
@@ -45,7 +45,7 @@ public class StocksResource {
     @DELETE
     @Path("{id}")
     @Transactional
-    public Response delete(Long id) {
+    public Response delete(@PathParam("id") Long id) {
         StockEntity entity = StockEntity.findById(id);
         if (entity == null) {
             throw new WebApplicationException("Stock with id of " + id + " does not exist.", 404);
