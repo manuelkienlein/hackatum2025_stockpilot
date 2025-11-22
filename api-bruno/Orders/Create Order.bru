@@ -1,0 +1,26 @@
+meta {
+  name: Create Order
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/orders
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "stock_id": 1,
+    "quantity": 2,
+    "placed_at": "2024-02-15T10:30:00.000+00:00",
+    "price_per_unit": 4.32
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
