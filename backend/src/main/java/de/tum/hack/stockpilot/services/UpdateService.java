@@ -50,11 +50,14 @@ public class UpdateService {
     @Transactional
     public void fetchStock(String symbol) {
         StockEntity stock = StockEntity.find("symbol", symbol).firstResult();
-        if (stock == null) {
-            stock = new StockEntity();
+        if (stock != null) {
+            return;
         }
 
+        stock = new StockEntity();
+
         StockEntityAPI stockAPI = apiClient.getStockInfoFromAPI(symbol, apiKey).get(0);
+
         stock.symbol = stockAPI.symbol;
         stock.name = stockAPI.companyName;
         stock.exchange = stockAPI.isin;
