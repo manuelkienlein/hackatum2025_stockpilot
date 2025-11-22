@@ -1,5 +1,6 @@
-package org.acme;
+package de.tum.hack.stockpilot.controllers;
 
+import de.tum.hack.stockpilot.entities.StockEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
 import jakarta.transaction.Transactional;
@@ -9,43 +10,43 @@ import java.util.List;
 import io.quarkus.panache.common.Sort;
 import jakarta.ws.rs.core.Response;
 
-@Path("/prices")
+@Path("/stocks")
 @ApplicationScoped
 @Produces("application/json")
 @Consumes("application/json")
-public class PriceResource {
+public class StocksResource {
 
     @GET
-    public List<PriceEntity> get() {
-        return PriceEntity.listAll(Sort.by("date"));
+    public List<StockEntity> get() {
+        return StockEntity.listAll(Sort.by("name"));
     }
 
     @GET
     @Path("{id}")
-    public PriceEntity getSingle(Long id) {
-        PriceEntity entity = PriceEntity.findById(id);
+    public StockEntity getSingle(Long id) {
+        StockEntity entity = StockEntity.findById(id);
         if (entity == null) {
-            throw new WebApplicationException("Price listing with id of " + id + " does not exist.", 404);
+            throw new WebApplicationException("Stock with id of " + id + " does not exist.", 404);
         }
         return entity;
     }
 
     @POST
     @Transactional
-    public Response create(PriceEntity price) {
-        if (price.id != null) {
+    public Response create(StockEntity stock) {
+        if (stock.id != null) {
             throw new WebApplicationException("Id was invalidly set on request.", 422);
         }
 
-        price.persist();
-        return Response.ok(price).status(201).build();
+        stock.persist();
+        return Response.ok(stock).status(201).build();
     }
 
     @DELETE
     @Path("{id}")
     @Transactional
     public Response delete(Long id) {
-        PriceEntity entity = PriceEntity.findById(id);
+        StockEntity entity = StockEntity.findById(id);
         if (entity == null) {
             throw new WebApplicationException("Stock with id of " + id + " does not exist.", 404);
         }

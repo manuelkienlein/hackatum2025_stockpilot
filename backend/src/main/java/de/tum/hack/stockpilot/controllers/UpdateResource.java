@@ -1,8 +1,9 @@
-package org.acme;
+package de.tum.hack.stockpilot.controllers;
 
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.inject.Inject;
+import de.tum.hack.stockpilot.services.UpdateService;
 
 @Path("/update")
 public class UpdateResource {
@@ -12,7 +13,7 @@ public class UpdateResource {
 
     @POST
     public String importData() {
-        service.fetchAndSavePeople();
+        service.fetchPriceHistory();
         return "Data imported";
     }
 }

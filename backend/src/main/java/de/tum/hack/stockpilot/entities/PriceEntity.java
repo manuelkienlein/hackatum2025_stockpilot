@@ -1,4 +1,4 @@
-package org.acme;
+package de.tum.hack.stockpilot.entities;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;

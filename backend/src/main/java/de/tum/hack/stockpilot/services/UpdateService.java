@@ -1,10 +1,8 @@
-package org.acme;
+package de.tum.hack.stockpilot.services;
 
+import de.tum.hack.stockpilot.entities.PriceEntity;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-import java.util.List;
 
 @ApplicationScoped
 public class UpdateService {
@@ -14,7 +12,7 @@ public class UpdateService {
     //ExternalApiClient apiClient;
 
     @Transactional
-    public void fetchAndSavePeople() {
+    public void fetchPriceHistory() {
         /*List<PriceEntity> users = apiClient.getPricesFromAPI("AAPL");
 
         for (PriceEntity dto : users) {

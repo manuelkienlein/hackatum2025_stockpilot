@@ -1,5 +1,6 @@
-package org.acme;
+package de.tum.hack.stockpilot.services;
 
+import de.tum.hack.stockpilot.entities.PriceEntity;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
