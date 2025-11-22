@@ -1,0 +1,29 @@
+meta {
+  name: Create Price
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/prices
+  body: json
+  auth: inherit
+}
+
+body:json {
+   {
+    "stock_id": 4,
+    "date": "2024-02-15T10:30:00.000+00:00",
+    "open": 1.0,
+    "close": 3.0,
+    "high": 3.1,
+    "low": 0.7,
+    "volume": 43
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
