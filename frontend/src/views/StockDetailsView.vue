@@ -6,8 +6,7 @@ const route = useRoute()
 </script>
 
 <template>
-Stock {{ route.params.symbol }}
-  <StockChart></StockChart>
+  <StockChart :symbol="route.params.symbol" currency="USD"></StockChart>
 </template>
 
 <style scoped>

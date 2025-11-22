@@ -2,6 +2,7 @@ package de.tum.hack.stockpilot.dto;
 
 import java.util.Date;
 
+// used by external api!
 public class PriceEntityResponse {
     public String symbol;
     public Date date;

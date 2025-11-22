@@ -6,13 +6,14 @@
           {{ symbol }} Stock Chart
         </h2>
         <p class="text-sm text-muted-foreground">
-          {{ formattedDateRange }} • Close price ({{ currency }})
+          {{ formattedDateRange }}
+          <span v-if="currency"> • Close price ({{ currency }})</span>
         </p>
       </div>
       <div v-if="latestPoint" class="text-right">
         <div class="text-sm text-muted-foreground">Last price</div>
         <div class="text-lg font-semibold">
-          {{ formatCurrency(latestPoint.close, currency) }}
+          {{ formatCurrency(latestPoint.close, currency || 'USD') }}
         </div>
         <div
             class="text-xs font-medium"
@@ -27,6 +28,15 @@
       </div>
     </div>
 
+    <div class="mb-2 flex items-center gap-3 text-xs">
+      <span v-if="isLoading" class="text-muted-foreground">
+        Loading history…
+      </span>
+      <span v-if="error" class="text-red-600">
+        {{ error }}
+      </span>
+    </div>
+
     <div
         class="relative h-56 w-full select-none"
         @mousemove="onMouseMove"
@@ -34,7 +44,7 @@
         ref="chartContainer"
     >
       <svg
-          v-if="normalizedPoints.length > 1"
+          v-if="!isLoading && !error && normalizedPoints.length > 1"
           :viewBox="`0 0 ${width} ${height}`"
           class="h-full w-full"
           preserveAspectRatio="none"
@@ -95,7 +105,7 @@
           :style="tooltipStyle"
       >
         <div class="font-medium">
-          {{ formatCurrency(hoverPoint.close, currency) }}
+          {{ formatCurrency(hoverPoint.close, currency || 'USD') }}
         </div>
         <div class="text-muted-foreground">
           {{ formatDate(hoverPoint.date) }}
@@ -103,7 +113,7 @@
       </div>
 
       <div
-          v-else-if="normalizedPoints.length <= 1"
+          v-else-if="!isLoading && !error && normalizedPoints.length <= 1"
           class="flex h-full items-center justify-center text-xs text-muted-foreground"
       >
         Not enough data to render chart.
@@ -111,48 +121,67 @@
     </div>
 
     <p class="mt-3 text-xs text-muted-foreground">
-      * Sample data for demo purposes. Replace with live API data in your app.
+      * Data is loaded from <code>/stocks/{{ symbol }}/history</code> (close price only).
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { getStockHistory, type StockHistoryItem } from "@/service/stockService";
 
 interface StockPoint {
   date: string | Date;
   close: number;
 }
 
-// Props mit Fallback-Daten
-const props = withDefaults(
-    defineProps<{
-      symbol?: string;
-      currency?: string;
-      data?: StockPoint[];
-    }>(),
-    {
-      symbol: "AAPL",
-      currency: "USD",
-      data: () => [
-        { date: "2025-11-13", close: 168.2 },
-        { date: "2025-11-14", close: 169.8 },
-        { date: "2025-11-17", close: 167.5 },
-        { date: "2025-11-18", close: 171.1 },
-        { date: "2025-11-19", close: 173.4 },
-        { date: "2025-11-20", close: 172.0 },
-        { date: "2025-11-21", close: 174.7 },
-      ],
-    },
-);
+const props = defineProps<{
+  symbol: string;
+  currency?: string;
+}>();
 
 const symbol = computed(() => props.symbol);
 const currency = computed(() => props.currency);
-const rawData = computed(() =>
-    [...props.data].sort(
-        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    ),
-);
+
+// --- State für API-Loading ---
+const isLoading = ref(false);
+const error = ref<string | null>(null);
+const dataPoints = ref<StockPoint[]>([]);
+
+async function loadHistory() {
+  if (!symbol.value) return;
+  isLoading.value = true;
+  error.value = null;
+  try {
+    const history: StockHistoryItem[] = await getStockHistory(symbol.value);
+
+    // Du hast erwähnt, es reicht das Closing – also mappen wir nur date + close
+    // und sortieren nach Datum aufsteigend, falls die API absteigend liefert
+    const mapped: StockPoint[] = history
+        .map((h) => ({
+          date: h.date,
+          close: h.close,
+        }))
+        .sort(
+            (a, b) =>
+                new Date(a.date).getTime() - new Date(b.date).getTime(),
+        );
+
+    dataPoints.value = mapped;
+  } catch (e: any) {
+    console.error(e);
+    error.value = e?.message ?? "Failed to load stock history";
+    dataPoints.value = [];
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+onMounted(loadHistory);
+watch(symbol, () => loadHistory());
+
+// --- Chart-Berechnung (wie vorher, nur basierend auf dataPoints) ---
+const rawData = computed(() => dataPoints.value);
 
 const width = 1000;
 const height = 300;
@@ -167,9 +196,7 @@ interface NormalizedPoint {
 const normalizedPoints = computed<NormalizedPoint[]>(() => {
   if (!rawData.value.length) return [];
 
-  const dates = rawData.value.map((d) => new Date(d.date));
   const prices = rawData.value.map((d) => d.close);
-
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
   const priceRange = maxPrice - minPrice || 1;
@@ -218,10 +245,10 @@ const latestPoint = computed(() =>
 );
 
 const trendChange = computed(() => {
-  const pts = normalizedPoints.value;
+  const pts = rawData.value;
   if (pts.length < 2) return 0;
-  const first = rawData.value[0].close;
-  const last = rawData.value[rawData.value.length - 1].close;
+  const first = pts[0].close;
+  const last = pts[pts.length - 1].close;
   return ((last - first) / first) * 100;
 });
 
@@ -283,7 +310,6 @@ function onMouseMove(event: MouseEvent) {
   const ratioX = relX / rect.width;
   const targetX = ratioX * width;
 
-  // Nächsten Punkt finden
   let closest: NormalizedPoint | null = null;
   let minDist = Infinity;
   for (const p of normalizedPoints.value) {
@@ -299,8 +325,4 @@ function onMouseMove(event: MouseEvent) {
 function onMouseLeave() {
   hoverPoint.value = null;
 }
-
-onMounted(() => {
-  // nothing special, but ensures ref is ready
-});
 </script>

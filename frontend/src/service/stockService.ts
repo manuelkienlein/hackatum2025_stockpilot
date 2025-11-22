@@ -9,6 +9,17 @@ export interface Stock {
     isin: string;
 }
 
+export interface StockHistoryItem {
+    id: number;
+    symbol: string;
+    date: string; // ISO-String
+    open: number;
+    close: number;
+    high: number;
+    low: number;
+    volume: number;
+}
+
 // payload zum Erstellen (id kommt vom Backend)
 export type CreateStockPayload = Omit<Stock, "id">;
 
@@ -45,4 +56,11 @@ export async function updateStock(
 
 export async function deleteStock(id: number): Promise<void> {
     await api.delete(`/stocks/${id}`);
+}
+
+export async function getStockHistory(
+    symbol: string,
+): Promise<StockHistoryItem[]> {
+    const res = await api.get<StockHistoryItem[]>(`/stocks/${symbol}/history`);
+    return res.data;
 }

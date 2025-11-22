@@ -1,5 +1,6 @@
 package de.tum.hack.stockpilot.controllers;
 
+import de.tum.hack.stockpilot.entities.PriceEntity;
 import de.tum.hack.stockpilot.entities.StockEntity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.*;
@@ -22,11 +23,11 @@ public class StocksResource {
     }
 
     @GET
-    @Path("{id}")
-    public StockEntity getSingle(@PathParam("id") Long id) {
-        StockEntity entity = StockEntity.findById(id);
+    @Path("{symbol}")
+    public StockEntity getSingle(@PathParam("symbol") String symbol) {
+        StockEntity entity = StockEntity.find("symbol", symbol).firstResult();
         if (entity == null) {
-            throw new WebApplicationException("Stock with id of " + id + " does not exist.", 404);
+            throw new WebApplicationException("Stock with symbol " + symbol + " does not exist.", 404);
         }
         return entity;
     }
@@ -43,14 +44,20 @@ public class StocksResource {
     }
 
     @DELETE
-    @Path("{id}")
+    @Path("{symbol}")
     @Transactional
-    public Response delete(@PathParam("id") Long id) {
-        StockEntity entity = StockEntity.findById(id);
+    public Response delete(@PathParam("symbol") String symbol) {
+        StockEntity entity = StockEntity.find("symbol", symbol).firstResult();
         if (entity == null) {
-            throw new WebApplicationException("Stock with id of " + id + " does not exist.", 404);
+            throw new WebApplicationException("Stock with symbol " + symbol + " does not exist.", 404);
         }
         entity.delete();
         return Response.status(204).build();
+    }
+
+    @GET()
+    @Path("{symbol}/history")
+    public List<PriceEntity> get(@PathParam("symbol") String symbol) {
+        return PriceEntity.find("symbol", Sort.by("date").ascending(), symbol).list();
     }
 }

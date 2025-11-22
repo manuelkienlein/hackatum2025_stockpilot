@@ -33,7 +33,7 @@ public class UpdateService {
         }
 
         // Don't fetch from API when data is already in the database
-        if (PriceEntity.find("stock_id", stock.id).firstResult() != null) {
+        if (PriceEntity.find("symbol", stock.symbol).firstResult() != null) {
             return;
         }
 
@@ -42,7 +42,7 @@ public class UpdateService {
 
         for (PriceEntityResponse entityAPI : users) {
             PriceEntity price = new PriceEntity();
-            price.stock_id = stock.id;
+            price.symbol = stock.symbol;
             price.date = entityAPI.date;
             price.open = entityAPI.open;
             price.close = entityAPI.close;

@@ -10,7 +10,7 @@ import java.util.Date;
 @Entity
 @Cacheable
 public class PriceEntity extends PanacheEntity {
-    public Long stock_id;
+    public String symbol;
     public Date date;
     public Float open;
     public Float close;
