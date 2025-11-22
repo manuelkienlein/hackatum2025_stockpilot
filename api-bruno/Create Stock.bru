@@ -1,0 +1,26 @@
+meta {
+  name: Create Stock
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/stocks
+  body: json
+  auth: inherit
+}
+
+body:json {
+   {
+    "symbol": "AAPL",
+    "name": "Apple Inc.",
+    "exchange": "NASDAQ",
+    "isin": "US0378331005"
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
