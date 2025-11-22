@@ -1,1 +1,1 @@
-secrets.txt
+backend/src/main/resources/config/secret.properties

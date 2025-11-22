@@ -5,6 +5,7 @@ import de.tum.hack.stockpilot.entitiesAPI.PriceEntityAPI;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.List;
@@ -16,9 +17,12 @@ public class UpdateService {
     @RestClient
     ExternalApiClient apiClient;
 
+    @ConfigProperty(name = "external-api.apikey")
+    String apiKey;
+
     @Transactional
     public void fetchPriceHistory(String symbol) {
-        List<PriceEntityAPI> users = apiClient.getPricesFromAPI(symbol);
+        List<PriceEntityAPI> users = apiClient.getPricesFromAPI(symbol, apiKey);
 
         for (PriceEntityAPI entityAPI : users) {
             PriceEntity price = new PriceEntity();

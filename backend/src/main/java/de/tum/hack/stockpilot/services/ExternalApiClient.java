@@ -13,5 +13,5 @@ import java.util.List;
 public interface ExternalApiClient {
     @GET
     @Path("/historical-price-eod/full")
-    List<PriceEntityAPI> getPricesFromAPI(@QueryParam("symbol") String symbol);
+    List<PriceEntityAPI> getPricesFromAPI(@QueryParam("symbol") String symbol, @QueryParam("apikey") String apikey);
 }
