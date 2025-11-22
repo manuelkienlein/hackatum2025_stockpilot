@@ -9,8 +9,8 @@ import java.util.List;
 @ApplicationScoped
 public class UpdateService {
 
-    @Inject
-    @RestClient
+    //@Inject
+    //@RestClient
     //ExternalApiClient apiClient;
 
     @Transactional
@@ -26,7 +26,7 @@ public class UpdateService {
         PriceEntity price = new PriceEntity();
         price.open = 1.0f;
         price.close = 1.1f;
-        //price.persist();
+        price.persist();
     }
 }
 
