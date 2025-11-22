@@ -6,7 +6,7 @@ const route = useRoute()
 </script>
 
 <template>
-Stock {{ route.params.id }}
+Stock {{ route.params.symbol }}
   <StockChart></StockChart>
 </template>
 

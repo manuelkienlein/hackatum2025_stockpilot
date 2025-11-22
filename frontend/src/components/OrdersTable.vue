@@ -55,7 +55,7 @@
         >
           <!-- Symbol -->
           <TableCell class="font-mono font-semibold">
-            {{ order.symbol }}
+            <RouterLink :to="`/stocks/${order.symbol}`">{{ order.symbol }}</RouterLink>
           </TableCell>
 
           <!-- Type -->

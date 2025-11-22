@@ -24,11 +24,11 @@ const routes = [
         },
         children: [
             {
-                path: '/stocks/:id',
+                path: '/stocks/:symbol',
                 name: 'StockDetailsView',
                 component: StockDetailsView,
                 meta: {
-                    breadcrumb: (route) => `Stock ${route.params.id}`,
+                    breadcrumb: (route) => `Stock ${route.params.symbol}`,
                 },
             },
             {

@@ -33,12 +33,12 @@
             :key="position.symbol"
         >
           <TableCell class="font-mono font-semibold">
-            {{ position.symbol }}
+            <RouterLink :to="`/stocks/${position.symbol}`">{{ position.symbol }}</RouterLink>
           </TableCell>
           <TableCell>
             <div class="flex flex-col">
               <span class="text-sm font-medium">
-                {{ position.name }}
+                <RouterLink :to="`/stocks/${position.symbol}`">{{ position.name }}</RouterLink>
               </span>
               <span class="text-xs text-muted-foreground">
                 {{ position.exchange }} • {{ position.currency }}

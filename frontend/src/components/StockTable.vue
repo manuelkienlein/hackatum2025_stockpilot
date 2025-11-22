@@ -28,6 +28,8 @@
         <TableRow
             v-for="stock in stocks"
             :key="stock.id"
+            @click="$router.push(`/stocks/${stock.symbol}`)"
+            class="hover:cursor-pointer"
         >
           <TableCell class="text-xs text-muted-foreground">
             {{ stock.id }}
