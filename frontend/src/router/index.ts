@@ -9,6 +9,7 @@ import AccountLayout from "../layouts/AccountLayout.vue";
 import PortfolioView from "../views/PortfolioView.vue";
 import OrderView from "../views/OrderView.vue";
 import StockListView from "../views/StockListView.vue";
+import WatchlistView from "../views/WatchlistView.vue";
 
 const routes = [
     { path: '/', redirect: '/login' },
@@ -53,6 +54,14 @@ const routes = [
                 component: OrderView,
                 meta: {
                     breadcrumb: "Orders",
+                },
+            },
+            {
+                path: '/watchlist',
+                name: 'WatchlistView',
+                component: WatchlistView,
+                meta: {
+                    breadcrumb: "Watchlist",
                 },
             },
         ]

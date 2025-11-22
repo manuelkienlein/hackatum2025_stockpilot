@@ -62,7 +62,7 @@ const data = {
         },
         {
           title: "Watchlist",
-          url: "#",
+          url: "/watchlist",
         },
       ],
     },

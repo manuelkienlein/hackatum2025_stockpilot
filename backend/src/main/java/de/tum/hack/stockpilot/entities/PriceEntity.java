@@ -20,4 +20,11 @@ public class PriceEntity extends PanacheEntity {
 
     public PriceEntity() {
     }
+
+    public static Float findLatestClosePrice(String symbol) {
+        PriceEntity result = find("symbol = ?1 ORDER BY date DESC", symbol)
+                .firstResult();
+
+        return result != null ? result.close : null;
+    }
 }
