@@ -1,0 +1,8 @@
+app:
+  init:
+    stocks:
+      - AAPL
+      - MSFT
+      - TSLA
+      - NVDA
+      - GOOG
