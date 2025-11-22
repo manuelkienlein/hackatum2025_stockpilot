@@ -5,7 +5,6 @@ app:
       - MSFT
       - TSLA
       - NVDA
-      - GOOG
 
 
 quarkus:
