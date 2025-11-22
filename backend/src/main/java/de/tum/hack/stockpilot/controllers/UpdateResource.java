@@ -13,7 +13,8 @@ public class UpdateResource {
 
     @POST
     public String importData() {
-        service.fetchPriceHistory("NVDA");
+        service.fetchStock("AAPL");
+        //service.fetchPriceHistory("NVDA");
         return "Data imported";
     }
 }

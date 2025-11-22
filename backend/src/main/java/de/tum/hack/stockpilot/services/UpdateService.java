@@ -3,6 +3,7 @@ package de.tum.hack.stockpilot.services;
 import de.tum.hack.stockpilot.entities.PriceEntity;
 import de.tum.hack.stockpilot.entities.StockEntity;
 import de.tum.hack.stockpilot.entitiesAPI.PriceEntityAPI;
+import de.tum.hack.stockpilot.entitiesAPI.StockEntityAPI;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -44,6 +45,21 @@ public class UpdateService {
             price.volume = entityAPI.volume;
             price.persist();
         }
+    }
+
+    @Transactional
+    public void fetchStock(String symbol) {
+        StockEntity stock = StockEntity.find("symbol", symbol).firstResult();
+        if (stock == null) {
+            stock = new StockEntity();
+        }
+
+        StockEntityAPI stockAPI = apiClient.getStockInfoFromAPI(symbol, apiKey).get(0);
+        stock.symbol = stockAPI.symbol;
+        stock.name = stockAPI.companyName;
+        stock.exchange = stockAPI.isin;
+        stock.isin = stockAPI.isin;
+        stock.persist();
     }
 }
 
