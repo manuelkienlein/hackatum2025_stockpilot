@@ -1,14 +1,13 @@
 package org.acme;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 import io.quarkus.panache.common.Sort;
+import jakarta.ws.rs.core.Response;
 
 @Path("/stocks")
 @ApplicationScoped
@@ -19,5 +18,38 @@ public class StocksResource {
     @GET
     public List<StockEntity> get() {
         return StockEntity.listAll(Sort.by("name"));
+    }
+
+    @GET
+    @Path("{id}")
+    public StockEntity getSingle(Long id) {
+        StockEntity entity = StockEntity.findById(id);
+        if (entity == null) {
+            throw new WebApplicationException("Stock with id of " + id + " does not exist.", 404);
+        }
+        return entity;
+    }
+
+    @POST
+    @Transactional
+    public Response create(StockEntity stock) {
+        if (stock.id != null) {
+            throw new WebApplicationException("Id was invalidly set on request.", 422);
+        }
+
+        stock.persist();
+        return Response.ok(stock).status(201).build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    @Transactional
+    public Response delete(Long id) {
+        StockEntity entity = StockEntity.findById(id);
+        if (entity == null) {
+            throw new WebApplicationException("Stock with id of " + id + " does not exist.", 404);
+        }
+        entity.delete();
+        return Response.status(204).build();
     }
 }
