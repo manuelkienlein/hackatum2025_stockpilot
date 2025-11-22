@@ -27,4 +27,8 @@ public class PriceEntity extends PanacheEntity {
 
         return result != null ? result.close : null;
     }
+
+    public Date getDate() {
+        return date;
+    }
 }
