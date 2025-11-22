@@ -16,7 +16,7 @@ public class StockPilotApplication {
     }
     void onStart(@Observes StartupEvent ev) {
         System.out.println("🚀 App gestartet");
-        System.out.println("📈 Stock-Symbole aus Config:");
+        System.out.println("📈 Init Stocks aus Config:");
 
         appConfig.init().stocks().forEach(
                 symbol -> System.out.println(" - " + symbol)
