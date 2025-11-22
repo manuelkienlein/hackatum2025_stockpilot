@@ -29,8 +29,8 @@
         <TableRow>
           <TableHead class="w-[90px]">Symbol</TableHead>
           <TableHead>Name</TableHead>
-          <TableHead class="text-right">Initial</TableHead>
-          <TableHead class="text-right">Last</TableHead>
+          <TableHead class="text-right">Initial Price</TableHead>
+          <TableHead class="text-right">Current Price</TableHead>
           <TableHead class="text-right">Performance</TableHead>
           <TableHead class="text-right">Added</TableHead>
           <TableHead class="text-right">Actions</TableHead>
@@ -82,8 +82,8 @@
 
           <!-- Last Price -->
           <TableCell class="text-right text-sm">
-            <span v-if="entry.lastPrice != null">
-              {{ formatPrice(entry.lastPrice) }}
+            <span v-if="entry.currentPrice != null">
+              {{ formatPrice(entry.currentPrice) }}
             </span>
             <span v-else class="text-muted-foreground">–</span>
           </TableCell>
@@ -168,11 +168,11 @@
                 variant="outline"
                 @click="addDialogOpen = false"
             >
-              Abbrechen
+              Cancel
             </Button>
             <Button type="submit" :disabled="adding">
               <Loader2 v-if="adding" class="w-4 h-4 mr-2 animate-spin" />
-              <span>Hinzufügen</span>
+              <span>Add</span>
             </Button>
           </DialogFooter>
         </form>
@@ -223,7 +223,7 @@ interface WatchlistEntry {
   id: number
   createdAt: string
   initialPrice: number | null
-  lastPrice: number | null
+  currentPrice: number | null
   stock: StockRef
 }
 
@@ -281,11 +281,11 @@ function performance(entry: WatchlistEntry): Performance | null {
   if (
       entry.initialPrice == null ||
       entry.initialPrice === 0 ||
-      entry.lastPrice == null
+      entry.currentPrice == null
   ) {
     return null
   }
-  const abs = entry.lastPrice - entry.initialPrice
+  const abs = entry.currentPrice - entry.initialPrice
   const pct = (abs / entry.initialPrice) * 100
   return { abs, pct }
 }
