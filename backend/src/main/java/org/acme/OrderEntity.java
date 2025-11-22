@@ -10,7 +10,6 @@ import java.util.Date;
 @Entity
 @Cacheable
 public class OrderEntity extends PanacheEntity {
-    public Long id;
     public Long stock_id;
     public int quantity;
     public Date placed_at;

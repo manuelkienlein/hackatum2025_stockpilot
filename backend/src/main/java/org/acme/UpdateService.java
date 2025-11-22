@@ -11,18 +11,22 @@ public class UpdateService {
 
     @Inject
     @RestClient
-    ExternalApiClient apiClient;
+    //ExternalApiClient apiClient;
 
     @Transactional
     public void fetchAndSavePeople() {
-        List<PriceEntity> users = apiClient.getPricesFromAPI();
+        /*List<PriceEntity> users = apiClient.getPricesFromAPI("AAPL");
 
         for (PriceEntity dto : users) {
             PriceEntity price = new PriceEntity();
             price.open = 1.0f;
             price.close = 2.0f;
             price.persist();
-        }
+        }*/
+        PriceEntity price = new PriceEntity();
+        price.open = 1.0f;
+        price.close = 1.1f;
+        //price.persist();
     }
 }
 
