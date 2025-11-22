@@ -27,6 +27,7 @@ public class StockPilotApplication {
                 symbol -> {
                     System.out.println(" - " + symbol);
                     updateService.fetchStock(symbol);
+                    updateService.fetchPriceHistory(symbol);
                 }
         );
 

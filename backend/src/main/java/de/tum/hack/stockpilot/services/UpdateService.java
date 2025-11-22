@@ -32,6 +32,12 @@ public class UpdateService {
             return;
         }
 
+        // Don't fetch from API when data is already in the database
+        if (PriceEntity.find("stock_id", stock.id).firstResult() != null) {
+            return;
+        }
+
+        System.out.println("[apiClint] Fetching price history data for " + symbol + " from API");
         List<PriceEntityResponse> users = apiClient.getPricesFromAPI(symbol, apiKey);
 
         for (PriceEntityResponse entityAPI : users) {
@@ -50,12 +56,15 @@ public class UpdateService {
     @Transactional
     public void fetchStock(String symbol) {
         StockEntity stock = StockEntity.find("symbol", symbol).firstResult();
+
+        // Don't fetch from API when data is already in the database
         if (stock != null) {
             return;
         }
 
         stock = new StockEntity();
 
+        System.out.println("[apiClint] Fetching stock data for " + symbol + " from API");
         StockEntityResponse stockAPI = apiClient.getStockInfoFromAPI(symbol, apiKey).get(0);
 
         stock.symbol = stockAPI.symbol;
