@@ -1,0 +1,15 @@
+package de.tum.hack.stockpilot.dto;
+
+public class PortfolioRequest {
+    public String symbol;
+    public String name;
+    public int quantity;
+    public float avg_buy;
+    public float current;
+    public float value;
+    public float profit_absolut;
+    public float profit_percent;
+    public float total_spend_for_stocks;
+}
+
+
