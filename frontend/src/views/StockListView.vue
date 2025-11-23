@@ -1,19 +1,5 @@
 <template>
   <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6">
-    <header class="flex items-center justify-between">
-      <h1 class="text-xl font-semibold tracking-tight">
-        Stock List
-      </h1>
-      <button
-          type="button"
-          class="text-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
-          @click="reload"
-          :disabled="isLoading"
-      >
-        Reload
-      </button>
-    </header>
-
     <div v-if="error" class="rounded-md border border-red-500/40 bg-red-500/5 p-3 text-sm text-red-600">
       {{ error }}
     </div>

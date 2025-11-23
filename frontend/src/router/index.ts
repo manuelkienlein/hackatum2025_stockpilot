@@ -10,6 +10,7 @@ import PortfolioView from "../views/PortfolioView.vue";
 import OrderView from "../views/OrderView.vue";
 import StockListView from "../views/StockListView.vue";
 import WatchlistView from "../views/WatchlistView.vue";
+import NetWorthView from "../views/NetWorthView.vue";
 
 const routes = [
     { path: '/', redirect: '/login' },
@@ -62,6 +63,14 @@ const routes = [
                 component: WatchlistView,
                 meta: {
                     breadcrumb: "Watchlist",
+                },
+            },
+            {
+                path: '/networth',
+                name: 'NetworthView',
+                component: NetWorthView,
+                meta: {
+                    breadcrumb: "Net Worth",
                 },
             },
         ]
