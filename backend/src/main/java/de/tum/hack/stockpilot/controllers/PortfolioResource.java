@@ -1,6 +1,6 @@
 package de.tum.hack.stockpilot.controllers;
 
-import de.tum.hack.stockpilot.dto.PortfolioRequest;
+import de.tum.hack.stockpilot.dto.PortfolioResponse;
 import de.tum.hack.stockpilot.entities.OrderEntity;
 import de.tum.hack.stockpilot.entities.PriceEntity;
 import de.tum.hack.stockpilot.entities.StockEntity;
@@ -8,15 +8,11 @@ import de.tum.hack.stockpilot.repositories.OrderRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
-import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-
-import io.quarkus.panache.common.Sort;
-import jakarta.ws.rs.core.Response;
 
 @Path("/portfolio")
 @ApplicationScoped
@@ -28,24 +24,28 @@ public class PortfolioResource {
     OrderRepository orderRepository;
 
     @GET
-    public List<PortfolioRequest> get() {
-        List<PortfolioRequest> portfolio = new ArrayList<>();
+    public List<PortfolioResponse> get() {
+        List<PortfolioResponse> portfolio = new ArrayList<>();
 
         List<OrderEntity> orders = OrderEntity.listAll();
 
         // Sum up quantity
         for (OrderEntity order : orders) {
 
-            PortfolioRequest portfolioEntry = null;
+            if(!order.isExecuted()) {
+                continue;
+            }
 
-            for (PortfolioRequest entry : portfolio) {
+            PortfolioResponse portfolioEntry = null;
+
+            for (PortfolioResponse entry : portfolio) {
                 if (entry.symbol.equals(order.getSymbol())) {
                     portfolioEntry = entry;
                 }
             }
 
             if (portfolioEntry == null) {
-                portfolioEntry = new PortfolioRequest();
+                portfolioEntry = new PortfolioResponse();
                 portfolioEntry.symbol = order.getSymbol();
 
                 portfolio.add(portfolioEntry);
@@ -57,7 +57,7 @@ public class PortfolioResource {
             portfolioEntry.total_spend_for_stocks += order.getExecutedPrice().toBigInteger().floatValue() * diff;
         }
 
-        for (PortfolioRequest portfolioEntry : portfolio) {
+        for (PortfolioResponse portfolioEntry : portfolio) {
 
             // get stock data to set name
             StockEntity stock = StockEntity.find("symbol", portfolioEntry.symbol).firstResult();
@@ -69,7 +69,7 @@ public class PortfolioResource {
             portfolioEntry.name = stock.name;
 
             // get value and calculate current value
-            Optional<PriceEntity> latestPrice = PriceEntity.find("stock_id", stock.id)
+            Optional<PriceEntity> latestPrice = PriceEntity.find("symbol", stock.symbol)
                     .stream().map(e -> (PriceEntity) e).max(Comparator.comparing(PriceEntity::getDate));
 
             if (latestPrice.isEmpty()) {

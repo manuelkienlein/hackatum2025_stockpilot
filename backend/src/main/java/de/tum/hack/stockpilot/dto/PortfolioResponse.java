@@ -1,6 +1,6 @@
 package de.tum.hack.stockpilot.dto;
 
-public class PortfolioRequest {
+public class PortfolioResponse {
     public String symbol;
     public String name;
     public int quantity;
