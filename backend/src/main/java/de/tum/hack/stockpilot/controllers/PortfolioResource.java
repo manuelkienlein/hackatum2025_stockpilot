@@ -67,6 +67,7 @@ public class PortfolioResource {
                 continue;
             }
             portfolioEntry.name = stock.name;
+            portfolioEntry.exchange = stock.exchange;
 
             // get value and calculate current value
             Optional<PriceEntity> latestPrice = PriceEntity.find("symbol", stock.symbol)

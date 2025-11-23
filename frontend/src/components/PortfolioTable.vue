@@ -106,10 +106,6 @@
         </TableRow>
       </TableBody>
     </Table>
-
-    <p class="mt-3 text-xs text-muted-foreground">
-      * Values werden live aus dem Backend (/portfolio) geladen.
-    </p>
   </div>
 </template>
 
@@ -176,7 +172,7 @@ async function fetchPortfolio() {
         symbol: e.symbol,
         name: e.name,
         // aktuell hast du im Backend keine Exchange/Currency – ggf. später erweitern
-        exchange: "—",
+        exchange: e.exchange,
         currency: "EUR",
         quantity: e.quantity,
         avgBuyPrice: e.avg_buy,
