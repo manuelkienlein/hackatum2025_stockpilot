@@ -197,6 +197,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table"
+import {query} from "happy-dom/lib/PropertySymbol.d.ts.js";
 
 // Types passend zu deinem OrderEntity JSON
 type OrderSide = "BUY" | "SELL"
@@ -250,10 +251,11 @@ const ordersForSymbolSorted = computed(() =>
 // Bestand & Kennzahlen aus ausgeführten Orders
 const position = computed<PositionInfo>(() => {
   let qty = 0
+  let buyQty = 0
   let invested = 0
 
   for (const o of ordersForSymbol.value) {
-    if (o.status !== "EXECUTED" || o.executedQuantity == null || o.executedPrice == null) {
+    if (o.status !== "EXECUTED") {
       continue
     }
 
@@ -261,12 +263,16 @@ const position = computed<PositionInfo>(() => {
     qty += signedQty
 
     if (o.side === "BUY") {
+      buyQty += signedQty
+      console.log("o.executedPrice", o.executedPrice)
+      console.log("o.executedQuanrity", o.executedQuantity)
       invested += o.executedPrice * o.executedQuantity
     }
     // Für einfaches MVP ignorieren wir hier die "Rückzahlung" von SELLs auf die Cost-Basis
   }
 
-  const avgBuy = qty > 0 ? invested / qty : 0
+  const avgBuy = qty > 0 ? invested / buyQty : 0
+  console.log(invested + " : " + buyQty)
 
   return {
     quantity: qty,
