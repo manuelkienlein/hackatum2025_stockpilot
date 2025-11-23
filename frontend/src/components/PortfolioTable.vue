@@ -30,7 +30,7 @@
           <TableHead class="text-right">Avg. Buy</TableHead>
           <TableHead class="text-right">Current</TableHead>
           <TableHead class="text-right">Value</TableHead>
-          <TableHead class="text-right">P/L</TableHead>
+          <TableHead class="text-right">Profit/Loss</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
