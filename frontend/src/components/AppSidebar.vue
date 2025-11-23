@@ -42,7 +42,7 @@ const data = {
         },
         {
           title: "Net Worth",
-          url: "/net-worth",
+          url: "/networth",
           icon: ChartNoAxesCombined
         },
       ],
