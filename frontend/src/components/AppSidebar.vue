@@ -37,11 +37,6 @@ const data = {
       items: [
         {
           title: "Dashboard",
-          url: "/dashboard",
-          icon: BarChart3
-        },
-        {
-          title: "Net Worth",
           url: "/networth",
           icon: ChartNoAxesCombined
         },

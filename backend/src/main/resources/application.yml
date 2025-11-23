@@ -5,6 +5,10 @@ app:
       - MSFT
       - TSLA
       - NVDA
+      - JNJ
+      - VZ
+      - WMT
+      - GS
 
 
 quarkus:
