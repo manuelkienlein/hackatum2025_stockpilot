@@ -119,7 +119,7 @@ const data = {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton variants="secondary">
-                <User2 class="w-4 h-4" /> Username
+                <User2 class="w-4 h-4" /> Account
                 <ChevronUp class="ml-auto w-4 h-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>

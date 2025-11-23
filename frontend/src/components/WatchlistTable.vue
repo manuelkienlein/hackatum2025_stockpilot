@@ -137,9 +137,9 @@
     <Dialog v-model:open="addDialogOpen">
       <DialogContent class="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Stock zur Watchlist hinzufügen</DialogTitle>
+          <DialogTitle>Add stock to watchlist</DialogTitle>
           <DialogDescription>
-            Gib das Symbol einer Aktie ein, die du beobachten möchtest.
+            Enter the symbol of a stock that you want to observe.
           </DialogDescription>
         </DialogHeader>
 
@@ -154,7 +154,7 @@
                 required
             />
             <p class="text-xs text-muted-foreground">
-              Das Symbol muss in deinem Backend als StockEntity existieren.
+              The stock symbol must be available in the system.
             </p>
           </div>
 
@@ -302,12 +302,12 @@ async function loadWatchlist() {
   try {
     const res = await fetch(apiBase)
     if (!res.ok) {
-      throw new Error(`Fehler beim Laden der Watchlist (${res.status})`)
+      throw new Error(`Error while loading watchlist (${res.status})`)
     }
     const data = await res.json()
     entries.value = data
   } catch (e: any) {
-    error.value = e?.message ?? 'Unbekannter Fehler beim Laden der Watchlist'
+    error.value = e?.message ?? 'Unknown error occurred while loading watchlist'
   } finally {
     loading.value = false
   }
@@ -336,20 +336,19 @@ async function addToWatchlist() {
 
     if (!res.ok) {
       const text = await res.text()
-      throw new Error(text || `Fehler beim Hinzufügen (${res.status})`)
+      throw new Error(text || `Failed to add (${res.status})`)
     }
 
     addDialogOpen.value = false
     await loadWatchlist()
   } catch (e: any) {
-    addError.value = e?.message ?? 'Fehler beim Hinzufügen zur Watchlist'
+    addError.value = e?.message ?? 'Failed to add to watchlist'
   } finally {
     adding.value = false
   }
 }
 
 async function removeFromWatchlist(entry: WatchlistEntry) {
-  if (!confirm(`"${entry.stock.symbol}" von der Watchlist entfernen?`)) return
   removingId.value = entry.id
   try {
     const res = await fetch(`${apiBase}/${entry.id}`, {
@@ -357,11 +356,11 @@ async function removeFromWatchlist(entry: WatchlistEntry) {
     })
     if (!res.ok) {
       const text = await res.text()
-      throw new Error(text || `Fehler beim Entfernen (${res.status})`)
+      throw new Error(text || `Failed to remove (${res.status})`)
     }
     await loadWatchlist()
   } catch (e: any) {
-    error.value = e?.message ?? 'Fehler beim Entfernen von der Watchlist'
+    error.value = e?.message ?? 'Failed to remove from watchlist'
   } finally {
     removingId.value = null
   }

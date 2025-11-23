@@ -12,7 +12,7 @@
       </div>
       <div class="flex flex-col items-end gap-1">
         <Button size="sm" @click="openCreateDialog">
-          Neue Order
+          New Order
         </Button>
       </div>
     </div>
@@ -39,12 +39,12 @@
       <TableBody>
         <TableRow v-if="loading">
           <TableCell colspan="8" class="text-center py-6 text-sm text-muted-foreground">
-            Lädt Orders…
+            Loadinfg orders...
           </TableCell>
         </TableRow>
         <TableRow v-else-if="orders.length === 0">
           <TableCell colspan="8" class="text-center py-6 text-sm text-muted-foreground">
-            Noch keine Orders vorhanden.
+            No orders available.
           </TableCell>
         </TableRow>
 
@@ -131,7 +131,7 @@
                   variant="outline"
                   @click="openExecuteDialog(order)"
                   :disabled="order.status !== 'PENDING'"
-                  title="Ausführen"
+                  title="Execute"
               >
                 <Play class="w-4 h-4" />
               </Button>
@@ -140,7 +140,7 @@
                   variant="outline"
                   @click="openEditDialog(order)"
                   :disabled="order.status !== 'PENDING'"
-                  title="Bearbeiten"
+                  title="Edit"
               >
                 <Pencil class="w-4 h-4" />
               </Button>
@@ -149,7 +149,7 @@
                   variant="destructive"
                   @click="cancelOrder(order)"
                   :disabled="order.status !== 'PENDING' || cancellingId === order.id"
-                  title="Abbrechen"
+                  title="Cancel"
               >
                 <Loader2 v-if="cancellingId === order.id" class="w-4 h-4 animate-spin" />
                 <X v-else class="w-4 h-4" />
@@ -169,12 +169,12 @@
       <DialogContent class="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {{ isEditing ? 'Order bearbeiten' : 'Neue Order anlegen' }}
+            {{ isEditing ? 'Edit order' : 'Create new order' }}
           </DialogTitle>
           <DialogDescription>
             {{ isEditing
-              ? 'Passe die Orderdaten an. Nur PENDING Orders können bearbeitet werden.'
-              : 'Lege eine neue Order an.' }}
+              ? 'Edit order information. Only PENDING orders can be modified.'
+              : 'Place a new order.' }}
           </DialogDescription>
         </DialogHeader>
 
@@ -194,7 +194,7 @@
               <Label>Side</Label>
               <Select v-model="form.side">
                 <SelectTrigger>
-                  <SelectValue placeholder="Side wählen" />
+                  <SelectValue placeholder="Choose side" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="BUY">BUY</SelectItem>
@@ -207,7 +207,7 @@
               <Label>Type</Label>
               <Select v-model="form.type">
                 <SelectTrigger>
-                  <SelectValue placeholder="Ordertyp wählen" />
+                  <SelectValue placeholder="Order Type" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="MARKET">MARKET</SelectItem>
@@ -238,7 +238,7 @@
                   step="0.0001"
                   v-model="form.limitPrice"
                   :disabled="!requiresLimitPrice"
-                  :placeholder="requiresLimitPrice ? 'z.B. 180.50' : 'nur für LIMIT/STOP_LIMIT'"
+                  :placeholder="requiresLimitPrice ? 'z.B. 180.50' : 'only for LIMIT/STOP_LIMIT'"
               />
             </div>
 
@@ -250,7 +250,7 @@
                   step="0.0001"
                   v-model="form.stopPrice"
                   :disabled="!requiresStopPrice"
-                  :placeholder="requiresStopPrice ? 'z.B. 175.00' : 'nur für STOP/STOP_LIMIT'"
+                  :placeholder="requiresStopPrice ? 'z.B. 175.00' : 'only for STOP/STOP_LIMIT'"
               />
             </div>
           </div>
@@ -265,11 +265,11 @@
                 variant="outline"
                 @click="dialogOpen = false"
             >
-              Abbrechen
+              Cancel
             </Button>
             <Button type="submit" :disabled="saving">
               <Loader2 v-if="saving" class="w-4 h-4 mr-2 animate-spin" />
-              <span>{{ isEditing ? 'Speichern' : 'Anlegen' }}</span>
+              <span>{{ isEditing ? 'Save' : 'Create' }}</span>
             </Button>
           </DialogFooter>
         </form>
@@ -280,9 +280,9 @@
     <Dialog v-model:open="executeDialogOpen">
       <DialogContent class="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Order ausführen</DialogTitle>
+          <DialogTitle>Execute order</DialogTitle>
           <DialogDescription>
-            Setze den Ausführungspreis und optional die ausgeführte Stückzahl.
+            Set the execution price and optionally the executed quantity.
           </DialogDescription>
         </DialogHeader>
 
@@ -293,7 +293,7 @@
 
         <form class="space-y-4" @submit.prevent="executeOrderWithInput">
           <div class="space-y-1">
-            <Label for="executedPrice">Ausführungspreis</Label>
+            <Label for="executedPrice">Execution price</Label>
             <Input
                 id="executedPrice"
                 type="number"
@@ -304,7 +304,7 @@
           </div>
 
           <div class="space-y-1">
-            <Label for="executedQuantity">Ausgeführte Stückzahl (optional)</Label>
+            <Label for="executedQuantity">Executed quantity (optional)</Label>
             <Input
                 id="executedQuantity"
                 type="number"
@@ -314,7 +314,7 @@
                 :placeholder="selectedOrder ? `Standard: ${selectedOrder.quantity}` : ''"
             />
             <p class="text-xs text-muted-foreground">
-              Leer lassen, um die komplette Ordermenge auszuführen.
+              Leave empty to execute the complete order quantity.
             </p>
           </div>
 
@@ -328,11 +328,11 @@
                 variant="outline"
                 @click="executeDialogOpen = false"
             >
-              Abbrechen
+              Cancel
             </Button>
             <Button type="submit" :disabled="executeSaving">
               <Loader2 v-if="executeSaving" class="w-4 h-4 mr-2 animate-spin" />
-              <span>Ausführen</span>
+              <span>Execute</span>
             </Button>
           </DialogFooter>
         </form>
@@ -508,12 +508,12 @@ async function fetchOrders() {
   try {
     const res = await fetch(apiBase)
     if (!res.ok) {
-      throw new Error(`Fehler beim Laden der Orders (${res.status})`)
+      throw new Error(`Error while loading orders (${res.status})`)
     }
     const data = await res.json()
     orders.value = data
   } catch (e: any) {
-    error.value = e?.message ?? 'Unbekannter Fehler beim Laden der Orders'
+    error.value = e?.message ?? 'Unknow error occurred while loading orders'
   } finally {
     loading.value = false
   }
@@ -632,7 +632,6 @@ async function saveOrder() {
 }
 
 async function cancelOrder(order: Order) {
-  if (!confirm(`Order #${order.id} wirklich abbrechen?`)) return
   cancellingId.value = order.id
   try {
     const res = await fetch(`${apiBase}/${order.id}/cancel`, {
