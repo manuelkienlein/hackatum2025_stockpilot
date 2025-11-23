@@ -3,17 +3,31 @@
     <div class="mb-4 flex items-center justify-between gap-2">
       <div>
         <h2 class="text-lg font-semibold tracking-tight">
-          Net Worth Development
+          Net Worth
         </h2>
         <p class="text-sm text-muted-foreground">
-          Development of your stock portfolio and cash reserve over time.
+          Development of your net worth over the last year.
         </p>
       </div>
-      <div class="text-sm text-muted-foreground">
-        Last net worth:
-        <span class="font-semibold">
-          {{ formatCurrency(latestValue, "EUR") }}
-        </span>
+
+      <div class="text-right">
+        <div class="text-sm text-muted-foreground">
+          Letzter Wert:
+          <span class="font-semibold">
+        {{ formatCurrency(latestValue, "EUR") }}
+      </span>
+        </div>
+
+        <div
+            class="text-sm font-semibold"
+            :class="performanceAbs >= 0 ? 'text-emerald-600' : 'text-red-600'"
+        >
+          <span v-if="performanceAbs >= 0">▲</span>
+          <span v-else>▼</span>
+
+          {{ formatCurrency(performanceAbs, 'EUR') }}
+          ({{ performancePct.toFixed(2) }}%)
+        </div>
       </div>
     </div>
 
@@ -89,6 +103,20 @@ const points = computed<PortfolioPoint[]>(() =>
 const latestValue = computed(() => {
   if (points.value.length === 0) return 0
   return points.value[points.value.length - 1].value
+})
+
+const firstValue = computed(() => {
+  if (points.value.length === 0) return 0
+  return points.value[0].value
+})
+
+const performanceAbs = computed(() => {
+  return latestValue.value - firstValue.value
+})
+
+const performancePct = computed(() => {
+  if (firstValue.value === 0) return 0
+  return (performanceAbs.value / firstValue.value) * 100
 })
 
 // ---- Chart Setup ----
