@@ -16,7 +16,7 @@ StockPilot shows you where your money stands and where it's heading. With a clea
   - Chart
   - Performance in recent times
   - Overview of orders and positions
-
+- Loading stock prices using financialmodelingprep (FMP) api
 
 ## Tech Stack
 - Quarkus
